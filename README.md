@@ -1,4 +1,4 @@
-In this program, you can calculate the following:
+In this matlab program, you can calculate the following:
 
  - metric tensor
  - riemannian connection
@@ -13,11 +13,42 @@ In this program, you can calculate the following:
  - visualization of scalar curvature
  - visualization of geodesic
 
+It is recommended to use the latest version of matlab
+
+ 
 ## examples
-![](images/sphere_geodesic.png)
-![](images/sphere_parallel.png)
-![](images/torus_parallel.png)
-![](images/torus_geodesic.png)
-![](images/torus_curvature.png)
-![](images/hyperbolic_parallel.png)
-![](images/hyperbolic_geodesic.png)
+|![](images/sphere_geodesic.png)|
+|:----:|
+|**sphere geodesic**|
+
+|![](images/sphere_parallel.png)|
+|:----:|
+|**sphere parallel**|
+
+|![](images/torus_parallel.png)|
+|:----:|
+|**torus parallel**|
+
+|![](images/torus_geodesic.png)|
+|:----:|
+|**torus geodesic**|
+
+|![](images/torus_curvature.png)|
+|:----:|
+|**torus curvature**|
+
+|![](images/hyperbolic_parallel.png)|
+|:----:|
+|**hyperbolic parallel**|
+
+|![](images/hyperbolic_geodesic.png)|
+|:----:|
+|**hyperbolic geodesic**|
+
+
+
+
+
+
+
+
