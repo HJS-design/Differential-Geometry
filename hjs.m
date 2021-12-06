@@ -128,7 +128,8 @@ classdef hjs < matlab.System
             Xf=matlabFunction(obj.X,'vars',{'u1','u2'});
             DT = delaunayTriangulation(x(:),y(:));
             [C,IA,IC]=uniquetol(Xf(DT.Points(:,1)',DT.Points(:,2)')','ByRows',true);
-            
+            TR=triangulation(IC(DT.ConnectivityList),C);
+            VV=vertexNormal(TR);
             if(draw_curvature)
                 curvatureF=matlabFunction(obj.Scalar_curvature,'vars',{'u1','u2'});
                 color=curvatureF(DT.Points(:,1),DT.Points(:,2));
@@ -136,13 +137,13 @@ classdef hjs < matlab.System
                     color=repmat(color,[size(DT.Points,1),1]);
                     
                 end
-                patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',color(IA),'FaceColor','interp','EdgeColor','none','FaceLighting','gouraud',"FaceAlpha",obj.alpha);
+                patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',color(IA),'FaceColor','interp','EdgeColor','none','VertexNormals',VV,'FaceLighting','gouraud','BackFaceLighting','unlit',"FaceAlpha",obj.alpha);
                 colormap parula;
                 view(3);
              
                 colorbar;
             else
-                patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',C(:,1),'FaceColor','interp','EdgeColor','none','FaceLighting','gouraud',"FaceAlpha",obj.alpha);
+                patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',C(:,1),'FaceColor','interp','EdgeColor','none','VertexNormals',VV,'FaceLighting','gouraud','BackFaceLighting','unlit',"FaceAlpha",obj.alpha);
                 camlight;
                 view(3);
           
