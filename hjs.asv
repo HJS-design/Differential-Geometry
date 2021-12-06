@@ -141,11 +141,11 @@ classdef hjs < matlab.System
                     
                 end
                 pat=patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',color(IA),'FaceColor','interp','EdgeColor','none','VertexNormals',VV,'FaceLighting','gouraud',"FaceAlpha",obj.alpha);
-                 pat.AmbientStrength=1;
-                 pat.DiffuseStrength=1;
-              pat.SpecularStrength=1;
-%                 pat.SpecularExponent=1;
-                pat.BackFaceLighting='unlit';
+%                 pat.AmbientStrength=0;
+%                 pat.DiffuseStrength=1;
+%                 pat.SpecularStrength=1;
+                pat.SpecularExponent=0.3;
+                pat.BackFaceLighting='reverselit';
                 colormap parula;
                 view(3);
                 
@@ -156,8 +156,8 @@ classdef hjs < matlab.System
                  pat.AmbientStrength=1;
                  pat.DiffuseStrength=1;
               pat.SpecularStrength=1;
-%                 pat.SpecularExponent=1;
-                pat.BackFaceLighting='unlit';
+                pat.SpecularExponent=1;
+                pat.BackFaceLighting='reverselit';
                 view(3);
            
                
