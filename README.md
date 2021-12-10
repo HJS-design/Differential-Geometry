@@ -15,8 +15,9 @@ In this matlab program, you can calculate the following:
 
 It is recommended to use the latest version of matlab
 
- 
-## examples
+ **Input**: parametric equation
+This routine will automatically calculate metrics induced by the ambient three-dimensional euclidean space.
+## some sample outputs
 |![](images/sphere_geodesic.png)|
 |:----:|
 |**sphere geodesic**|

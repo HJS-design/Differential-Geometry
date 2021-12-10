@@ -1,4 +1,4 @@
-classdef hjs < matlab.System
+classdef differential_geometry < matlab.System
     % Untitled Add summary here
     %
     % This template includes the minimum set of functions required
@@ -16,7 +16,7 @@ classdef hjs < matlab.System
         Ricci_tensor;
         Scalar_curvature;
         Gauss_curvature;
-        
+        FaceColor;
         alpha=1;
         scale=0.9;
     end
@@ -24,7 +24,7 @@ classdef hjs < matlab.System
     
     
     methods
-        function obj = hjs(varargin)
+        function obj = differential_geometry(varargin)
             % Support name-value pair arguments when constructing object
             setProperties(obj,nargin,varargin{:})
         end
@@ -88,7 +88,7 @@ classdef hjs < matlab.System
             
             tValues = linspace(interval(1),interval(2),ninterval);
             yValues = deval(ySol,tValues,yInit(1 ,2));
-           
+            
             syms tt;
             temp(t,tt)=subs(X,coordinate,u)+repmat(tt,[size(X,1),1]);
             t2Xf=matlabFunction(temp,'vars',{'t','tt'});
@@ -97,7 +97,7 @@ classdef hjs < matlab.System
             temp(t,tt)=subs([diff(X,coordinate(1));diff(X,coordinate(2))],coordinate,u)+repmat(tt,[size(X,1)*2,1]);
             dXf=matlabFunction(temp,'vars',{'t','tt'});
             rdx=squeeze(sum(reshape(dXf(tValues,tValues)-identity(tValues),[size(X,1),2,ninterval]).*repmat(reshape(yValues,[1,2,ninterval]),[size(X,1),1,1]),2));
-           
+            
             if(size(X,1)==2)
                 quiver(Xvalue(1,:),Xvalue(2,:),rdx(1,:),rdx(2,:),obj.scale,"LineWidth",2,'ShowArrowHead',0);
             else
@@ -110,7 +110,7 @@ classdef hjs < matlab.System
                 plot3(Xvalue(1,:),Xvalue(2,:),Xvalue(3,:),"LineWidth",2);
             end
             hold off;
-          
+            
         end
         function []= drawmesh(obj,uinterval,vinterval,draw_curvature,interval_num)
             if(size(obj.X,1)==2)
@@ -125,10 +125,13 @@ classdef hjs < matlab.System
             xvalue=linspace(uinterval(1),uinterval(2),interval_num);
             yvalue=linspace(vinterval(1),vinterval(2),interval_num);
             [x,y]=ndgrid(xvalue,yvalue);
-            Xf=matlabFunction(obj.X,'vars',{'u1','u2'});
+            syms tt;
+            Xf=matlabFunction(obj.X+tt,'vars',{'u1','u2','tt'});
+            tXf=matlabFunction([tt;tt;tt],'vars',{'tt'});
             DT = delaunayTriangulation(x(:),y(:));
-            [C,IA,IC]=uniquetol(Xf(DT.Points(:,1)',DT.Points(:,2)')','ByRows',true);
-            
+            [C,IA,IC]=uniquetol(Xf(DT.Points(:,1)',DT.Points(:,2)',DT.Points(:,1)')'-tXf(DT.Points(:,1)')','ByRows',true);
+            TR=triangulation(IC(DT.ConnectivityList),C);
+            VV=vertexNormal(TR);
             if(draw_curvature)
                 curvatureF=matlabFunction(obj.Scalar_curvature,'vars',{'u1','u2'});
                 color=curvatureF(DT.Points(:,1),DT.Points(:,2));
@@ -136,17 +139,30 @@ classdef hjs < matlab.System
                     color=repmat(color,[size(DT.Points,1),1]);
                     
                 end
-                patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',color(IA),'FaceColor','interp','EdgeColor','none','FaceLighting','gouraud',"FaceAlpha",obj.alpha);
+                pat=patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',color(IA),'FaceColor','interp','EdgeColor','none','VertexNormals',VV,"FaceAlpha",obj.alpha);
+                
+%                 pat.BackFaceLighting='unlit';
                 colormap parula;
                 view(3);
-             
+                
+                
                 colorbar;
             else
-                patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',C(:,1),'FaceColor','interp','EdgeColor','none','FaceLighting','gouraud',"FaceAlpha",obj.alpha);
-                camlight;
+                if(isempty(obj.FaceColor))
+                    pat=patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',C(:,1),'FaceColor','interp','EdgeColor','none','VertexNormals',VV,'FaceLighting','gouraud',"FaceAlpha",obj.alpha);
+                    
+                else
+                    pat=patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceColor',obj.FaceColor,'EdgeColor','none','VertexNormals',VV,'FaceLighting','gouraud',"FaceAlpha",obj.alpha);
+                    
+                end
+                
+                pat.BackFaceLighting='unlit';
                 view(3);
-          
+                camlight;
+                material shiny;
+                
             end
+            
             
             
         end
