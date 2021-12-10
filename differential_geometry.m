@@ -1,4 +1,4 @@
-classdef hjs < matlab.System
+classdef differential_geometry < matlab.System
     % Untitled Add summary here
     %
     % This template includes the minimum set of functions required
@@ -16,7 +16,7 @@ classdef hjs < matlab.System
         Ricci_tensor;
         Scalar_curvature;
         Gauss_curvature;
-        
+        FaceColor;
         alpha=1;
         scale=0.9;
     end
@@ -24,7 +24,7 @@ classdef hjs < matlab.System
     
     
     methods
-        function obj = hjs(varargin)
+        function obj = differential_geometry(varargin)
             % Support name-value pair arguments when constructing object
             setProperties(obj,nargin,varargin{:})
         end
@@ -132,7 +132,6 @@ classdef hjs < matlab.System
             [C,IA,IC]=uniquetol(Xf(DT.Points(:,1)',DT.Points(:,2)',DT.Points(:,1)')'-tXf(DT.Points(:,1)')','ByRows',true);
             TR=triangulation(IC(DT.ConnectivityList),C);
             VV=vertexNormal(TR);
- lig = light;
             if(draw_curvature)
                 curvatureF=matlabFunction(obj.Scalar_curvature,'vars',{'u1','u2'});
                 color=curvatureF(DT.Points(:,1),DT.Points(:,2));
@@ -140,30 +139,32 @@ classdef hjs < matlab.System
                     color=repmat(color,[size(DT.Points,1),1]);
                     
                 end
-                pat=patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',color(IA),'FaceColor','interp','EdgeColor','none','VertexNormals',VV,'FaceLighting','gouraud',"FaceAlpha",obj.alpha);
-                 pat.AmbientStrength=1;
-                 pat.DiffuseStrength=1;
-              pat.SpecularStrength=1;
-%                 pat.SpecularExponent=1;
-                pat.BackFaceLighting='unlit';
+                pat=patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',color(IA),'FaceColor','interp','EdgeColor','none','VertexNormals',VV,"FaceAlpha",obj.alpha);
+                
+%                 pat.BackFaceLighting='unlit';
                 colormap parula;
                 view(3);
                 
-        
+                
                 colorbar;
             else
-                pat=patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',C(:,1),'FaceColor','interp','EdgeColor','none','VertexNormals',VV,'FaceLighting','gouraud',"FaceAlpha",obj.alpha);
-                 pat.AmbientStrength=1;
-                 pat.DiffuseStrength=1;
-              pat.SpecularStrength=1;
-%                 pat.SpecularExponent=1;
+                if(isempty(obj.FaceColor))
+                    pat=patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceVertexCData',C(:,1),'FaceColor','interp','EdgeColor','none','VertexNormals',VV,'FaceLighting','gouraud',"FaceAlpha",obj.alpha);
+                    
+                else
+                    pat=patch('Faces',IC(DT.ConnectivityList),'Vertices',C,'FaceColor',obj.FaceColor,'EdgeColor','none','VertexNormals',VV,'FaceLighting','gouraud',"FaceAlpha",obj.alpha);
+                    
+                end
+                
                 pat.BackFaceLighting='unlit';
                 view(3);
-           
-               
+                camlight;
+                material shiny;
+                
             end
- lig.Position=-campos;
-%             camlight;
+            
+            
+            
         end
         function []= curvature_tensor(obj)
             n=obj.n;
